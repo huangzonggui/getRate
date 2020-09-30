@@ -9,6 +9,10 @@ response = requests.get("http://morate.on9tool.com/?to_currency=%E6%BE%B3%E9%96%
 
 soup = BeautifulSoup(response.text, "html.parser")
 
+expectExchangeRate = 0.84
+sendOrNot = False
+nowRate = 0
+
 def getData():
     #  print(item)
     #  bsObj = BeautifulSoup(item, "html.parser")
@@ -23,10 +27,14 @@ def getData():
         if a != '':
             print(float(a))
             a = float(a)
-            if a >= 0.84488:
+            if a >= expectExchangeRate:
+                sendOrNot = True
+                nowRate = a
                 print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>快，換錢啦, 匯率是：', a)
         # print()
 
+    if sendOrNot: 
+        sendMailBySMTP.send(nowRate)
 #print(soup.prettify())
 #  result = soup.find_all("tbody")
 #print(result)
@@ -56,6 +64,9 @@ def test():
 while True: 
     getData()
     print('---------------')
-    time.sleep(3)
+    time.sleep(60*60*24)
 
+# getData()
+
+# sendMailBySMTP.send()
 # sendMail.send()
