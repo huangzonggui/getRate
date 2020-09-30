@@ -12,8 +12,10 @@ sender = '1CCC20085@qq.com'
 # receivers = ['sam.chan@megadatatech.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 receivers = ['1XXX0085@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 
-def send(_rate):
-    message = MIMEText('匯率夠高啦，匯率是：'+str(_rate), 'plain', 'utf-8')
+def send(_rate, _rateTableHtml):
+    # MIMEText('匯率夠高啦，匯率是：'+str(_rate), 'plain', 'utf-8') 
+    _str = '<div>匯率夠高啦，匯率是：'+str(_rate)+'</div>'
+    message = MIMEText(_str + str(_rateTableHtml), 'html', 'utf-8')
     message['From'] = Header("genius", 'utf-8')
     message['To'] =  Header("someone who want to know", 'utf-8')
     
@@ -26,5 +28,5 @@ def send(_rate):
         smtpObj.login(mail_user,mail_pass)  
         smtpObj.sendmail(sender, receivers, message.as_string())
         print("邮件发送成功")
-    except smtplib.SMTPException:
-        print("Error: 无法发送邮件")
+    except smtplib.SMTPException as err:
+        print("Error: 无法发送邮件:" + err)

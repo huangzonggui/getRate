@@ -22,6 +22,32 @@ def changeExpectExchangeRate():
     except Exception:
         print('changeExpectExchangeRate error')
 
+def getRatesTable(): 
+    # print(soup.find(id='rates'))
+    rateTable = soup.find(id='rates')
+    # print(rateTable.tbody)
+    # print(rateTable.tbody.tr)
+    # print(rateTable.tbody.find_all("img"))
+    allImg = rateTable.tbody.find_all("img")
+    # img_urls = []
+    for oneImg in allImg: 
+        # img_urls.append(oneImg['src'])
+        oneImg['src'] = 'https://morate.on9tool.com' + oneImg['src']
+    # print(rateTable.tbody.find(text="/images/").replaceWith("https://morate.on9tool.com/images/"))
+    # print(rateTable)
+    # print(img_urls)
+    # img_urls = ['https://morate.on9tool.com' + sub for sub in img_urls]
+    # print(img_urls)
+
+    allTh = rateTable.thead.find_all("th")
+    for oneTh in allTh: 
+        # oneTh['style'] = "color: red;"
+        oneTh['style'] = "text-align: left;color: red;"
+    # print(allTh)
+
+    # print(rateTable)
+    return rateTable
+
 def getData():
     global sendOrNot
     #  print(item)
@@ -49,7 +75,7 @@ def getData():
         # print()
 
     if sendOrNot: 
-        sendMailBySMTP.send(nowRate)
+        sendMailBySMTP.send(nowRate, getRatesTable())
 
 def test():
     for tr in soup.find_all("tr"):
@@ -70,6 +96,8 @@ while True:
     getData()
     print('---------------')
     time.sleep(60*60*24)
+
+# getRatesTable()
 
 # getData()
 
