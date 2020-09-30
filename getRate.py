@@ -1,5 +1,6 @@
 import requests
 import time
+import sys
 from bs4 import BeautifulSoup
 
 import sendMail
@@ -9,11 +10,20 @@ response = requests.get("http://morate.on9tool.com/?to_currency=%E6%BE%B3%E9%96%
 
 soup = BeautifulSoup(response.text, "html.parser")
 
-expectExchangeRate = 0.84
-sendOrNot = False
+expectExchangeRate = 0.89
 nowRate = 0
+sendOrNot = False
+
+def changeExpectExchangeRate(): 
+    global expectExchangeRate
+    try:
+        print(float(sys.argv[1]))
+        expectExchangeRate = float(sys.argv[1])
+    except Exception:
+        print('changeExpectExchangeRate error')
 
 def getData():
+    global sendOrNot
     #  print(item)
     #  bsObj = BeautifulSoup(item, "html.parser")
     #  title = bsObj.find(
@@ -21,12 +31,17 @@ def getData():
     #      {"class": "btn-rounded"}
     #  )
     #  print(title)
+
+    changeExpectExchangeRate()
+    print('expectExchangeRate:', expectExchangeRate)
+
     for link in soup.find_all("a", {"class": "btn-rounded"}):
         print(link.get('data-selected-source'), end = '   ')
         a=link.get('data-selected-rate')
         if a != '':
             print(float(a))
             a = float(a)
+
             if a >= expectExchangeRate:
                 sendOrNot = True
                 nowRate = a
@@ -35,18 +50,9 @@ def getData():
 
     if sendOrNot: 
         sendMailBySMTP.send(nowRate)
-#print(soup.prettify())
-#  result = soup.find_all("tbody")
-#print(result)
-#  result = soup.find_all("td")
-#print(result)
+
 def test():
     for tr in soup.find_all("tr"):
-        # print(type(tr))
-        # if len(tr) == 0:
-        #     print(tr, 'is null')
-        #     break
-
         tds = tr.findChildren('td', recursive=False)
         # print(type(tds))
         for i in tds:
@@ -60,7 +66,6 @@ def test():
             # print(item.find('澳門'))
             # print('======')
 
-# test()
 while True: 
     getData()
     print('---------------')
